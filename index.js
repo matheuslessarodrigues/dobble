@@ -1,7 +1,7 @@
 const images = [];
 for(const i = 1; i <= 46; i++) {
 	const image = new Image();
-	image.src = `Dobble (${i}).png`;
+	image.src = `img-${i}.png`;
 	images.push(image);
 }
 
