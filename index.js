@@ -8,11 +8,10 @@ function panic(message) {
 }
 
 const IMAGES = [];
-for(let i = 0; i < 31; i++) {
-//for(let i = 0; i < 57; i++) {
+for(let i = 0; i < 57; i++) {
 	const imageNumber = i + 1;
 	const image = new Image();
-	image.src = `img-${imageNumber}.png`;
+	image.src = `images/${imageNumber}.png`;
 	IMAGES.push(image);
 }
 
@@ -93,10 +92,6 @@ function randomize(canvases) {
 			ctx.scale(scale, scale);
 
 			ctx.drawImage(image, -imageWidth * 0.5, -imageHeight * 0.5, imageWidth, imageHeight);
-			ctx.beginPath();
-			ctx.fillStyle = "red";
-			ctx.ellipse(0, 0, imageWidth * 0.5, imageHeight * 0.5, 0, 0, 2 * Math.PI);
-			ctx.stroke();
 
 			i += 1;
 		}
