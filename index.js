@@ -23,7 +23,7 @@ function createDobbleCardsFromImages(images) {
 		null;
 
 	if (deck == null) {
-		alert("numero de cartas tem que ser 57, 31 ou 13. foi " + images.length);
+		alert("Numero de cartas tem que ser 57, 31 ou 13.\nFoi feito upload de apenas " + images.length);
 		return [];
 	} else {
 		return deck;
