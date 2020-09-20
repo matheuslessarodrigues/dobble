@@ -87,6 +87,7 @@ function randomize(canvases) {
 
 			ctx.setTransform(1, 0, 0, 1, 0, 0);
 			ctx.translate(centerX, centerY);
+			ctx.rotate(Math.random() * Math.PI);
 
 			const scale = Math.random() * 0.5 + 0.7;
 			ctx.scale(scale, scale);
