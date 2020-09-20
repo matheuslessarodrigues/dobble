@@ -38,3 +38,12 @@ button {
 	height: 100px;
 	font-size: 40px;
 }
+
+span.version {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+
+	font-family: sans-serif;
+	font-size: 10px;
+}
