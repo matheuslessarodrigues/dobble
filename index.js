@@ -10,8 +10,15 @@ for(let i = 1; i <= 46; i++) {
 }
 
 function randomize(imgElements) {
+	const indexes = {};
+
 	for(img of imgElements) {
-		const index = Math.floor(Math.random() * images.length);
+		let index = null;
+		do {
+			index = Math.floor(Math.random() * images.length);
+		} while(indexes[index]);
+
+		indexes[index] = true;
 		const image = images[index];
 		img.src = image.src;
 	}
