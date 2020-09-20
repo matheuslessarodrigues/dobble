@@ -39,6 +39,11 @@ button {
 	font-size: 40px;
 }
 
+canvas {
+	border: dashed 2px rgb(200, 200, 200);
+	border-radius: 100px;
+}
+
 span.version {
 	position: absolute;
 	bottom: 10px;
