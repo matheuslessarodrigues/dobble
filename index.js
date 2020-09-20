@@ -7,22 +7,22 @@ function panic(message) {
 	throw message;
 }
 
-const images = [];
-for(let i = 1; i <= 46; i++) {
+const IMAGES = [];
+for(let i = 0; i < 31; i++) {
+//for(let i = 0; i < 57; i++) {
+	const imageNumber = i + 1;
 	const image = new Image();
-	image.src = `img-${i}.png`;
-	images.push(image);
+	image.src = `img-${imageNumber}.png`;
+	IMAGES.push(image);
 }
 
-/*
-const deck = images.length == 57 ?
+const DECK = IMAGES.length == 57 ?
 	createDobbleDeck(8) :
-	images.length == 31 ?
+	IMAGES.length == 31 ?
 	createDobbleDeck(6) :
-	images.length == 13 ?
+	IMAGES.length == 13 ?
 	createDobbleDeck(4) :
-	panic("numero de cartas tem que ser 57, 27 ou 13");
-*/
+	panic("numero de cartas tem que ser 57, 31 ou 13. foi " + IMAGES.length);
 
 function createDobbleDeck(n) {
 	// n-1 must be prime
@@ -50,18 +50,55 @@ function createDobbleDeck(n) {
 	return cards;
 }
 
-function randomize(imgElements) {
-	const indexes = {};
+function randomize(canvases) {
+	const cardIndexes = {};
 
-	for(img of imgElements) {
-		let index = null;
+	for(const canvas of canvases) {
+		const ctx = canvas.getContext("2d");
+		ctx.setTransform(1, 0, 0, 1, 0, 0);
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		let cardIndex = null;
 		do {
-			index = Math.floor(Math.random() * images.length);
-		} while(indexes[index]);
+			cardIndex = Math.floor(Math.random() * DECK.length);
+		} while(cardIndexes[cardIndex]);
+		cardIndexes[cardIndex] = true;
 
-		indexes[index] = true;
-		const image = images[index];
-		img.src = image.src;
+		const card = DECK[cardIndex];
+		const cardRotation = Math.random() * Math.PI;
+
+		const imageWidth = canvas.width * 0.3;
+		const imageHeight = canvas.height * 0.3;
+		const imageOffsetX = (canvas.width - imageWidth) * 0.5;
+		const imageOffsetY = (canvas.height - imageHeight) * 0.5;
+
+		let i = 0;
+		for (const imageIndex of card) {
+			const image = IMAGES[imageIndex];
+
+			let centerX = canvas.width * 0.5;
+			let centerY = canvas.height * 0.5;
+
+			if (i > 0) {
+				const angle = ((i - 1) / (card.length - 1)) * 2 * Math.PI + cardRotation;
+				centerX += Math.cos(angle) * imageOffsetX;
+				centerY += Math.sin(angle) * imageOffsetY;
+			}
+
+			ctx.setTransform(1, 0, 0, 1, 0, 0);
+			ctx.translate(centerX, centerY);
+
+			const scale = Math.random() * 0.5 + 0.7;
+			ctx.scale(scale, scale);
+
+			ctx.drawImage(image, -imageWidth * 0.5, -imageHeight * 0.5, imageWidth, imageHeight);
+			ctx.beginPath();
+			ctx.fillStyle = "red";
+			ctx.ellipse(0, 0, imageWidth * 0.5, imageHeight * 0.5, 0, 0, 2 * Math.PI);
+			ctx.stroke();
+
+			i += 1;
+		}
 	}
 }
 
@@ -74,7 +111,7 @@ function randomizeAnimation(state) {
 		return;
 	}
 
-	randomize(state.imgElements);
+	randomize(state.canvases);
 	state.timeout = setTimeout(
 		() => { randomizeAnimation(state); },
 		state.duration
@@ -86,13 +123,13 @@ function randomizeAnimation(state) {
 }
 
 window.onload = () => {
-	const imgs = document.querySelectorAll(".image-container img");
-	const button = document.querySelector("button#randomize");
+	const canvases = document.querySelectorAll("canvas");
+	const button = document.querySelector("button.randomize");
 
-	randomize(imgs);
+	randomize(canvases);
 
 	const animationState = {
-		imgElements: imgs,
+		canvases: canvases,
 		timeout: null,
 		iterationCount: 0,
 		duration: RANDOMIZE_START_DURATION,

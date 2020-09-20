@@ -29,7 +29,8 @@ body {
 	width: 100%;
 }
 
-.image-container img {
+.image-container canvas {
+	border: solid 1px red;
 }
 
 button {
