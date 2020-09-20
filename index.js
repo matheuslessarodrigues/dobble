@@ -2,11 +2,6 @@ const RANDOMIZE_COUNT = 20;
 const RANDOMIZE_START_DURATION = 0;
 const RANDOMIZE_DURATION_ACCELERATION = 2;
 
-function panic(message) {
-	alert(message);
-	throw message;
-}
-
 const IMAGES = [];
 for(let i = 0; i < 57; i++) {
 	const imageNumber = i + 1;
@@ -14,14 +9,26 @@ for(let i = 0; i < 57; i++) {
 	image.src = `images/${imageNumber}.png`;
 	IMAGES.push(image);
 }
+const DECK = {
+	cards: createDobbleCardsFromImages(IMAGES),
+}
 
-const DECK = IMAGES.length == 57 ?
-	createDobbleDeck(8) :
-	IMAGES.length == 31 ?
-	createDobbleDeck(6) :
-	IMAGES.length == 13 ?
-	createDobbleDeck(4) :
-	panic("numero de cartas tem que ser 57, 31 ou 13. foi " + IMAGES.length);
+function createDobbleCardsFromImages(images) {
+	const deck = images.length == 57 ?
+		createDobbleDeck(8) :
+		images.length == 31 ?
+		createDobbleDeck(6) :
+		images.length == 13 ?
+		createDobbleDeck(4) :
+		null;
+
+	if (deck == null) {
+		alert("numero de cartas tem que ser 57, 31 ou 13. foi " + images.length);
+		return [];
+	} else {
+		return deck;
+	}
+}
 
 function createDobbleDeck(n) {
 	// n-1 must be prime
@@ -50,8 +57,11 @@ function createDobbleDeck(n) {
 }
 
 function randomize(canvases) {
-	const cardIndexes = {};
+	if (DECK.cards.length == 0) {
+		return;
+	}
 
+	const cardIndexes = {};
 	for(const canvas of canvases) {
 		const ctx = canvas.getContext("2d");
 		ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -59,11 +69,11 @@ function randomize(canvases) {
 
 		let cardIndex = null;
 		do {
-			cardIndex = Math.floor(Math.random() * DECK.length);
+			cardIndex = Math.floor(Math.random() * DECK.cards.length);
 		} while(cardIndexes[cardIndex]);
 		cardIndexes[cardIndex] = true;
 
-		const card = DECK[cardIndex];
+		const card = DECK.cards[cardIndex];
 		const cardRotation = Math.random() * Math.PI;
 
 		const imageWidth = canvas.width * 0.3;
@@ -121,6 +131,19 @@ function randomizeAnimation(state) {
 window.onload = () => {
 	const canvases = document.querySelectorAll("canvas");
 	const button = document.querySelector("button.randomize");
+	const uploader = document.querySelector("input.uploader");
+
+	uploader.onchange = () => {
+		IMAGES.length = 0;
+		for (const file of uploader.files) {
+			const image = new Image();
+			image.src = file.name;
+			IMAGES.push(image);
+		}
+
+		DECK.cards = createDobbleCardsFromImages(IMAGES);
+		randomize(canvases);
+	};
 
 	randomize(canvases);
 
