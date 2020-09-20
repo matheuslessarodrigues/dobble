@@ -133,13 +133,27 @@ window.onload = () => {
 	const button = document.querySelector("button.randomize");
 	const uploader = document.querySelector("input.uploader");
 
-	uploader.onchange = () => {
+	uploader.onchange = async () => {
+		const loadImagePromises = [];
 		IMAGES.length = 0;
+
 		for (const file of uploader.files) {
 			const image = new Image();
-			image.src = file.name;
 			IMAGES.push(image);
+
+			loadImagePromises.push(new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onload = e => {
+					image.onload = () => {
+						resolve();
+					}
+					image.src = e.target.result;
+				};
+				reader.readAsDataURL(file);
+			}));
 		}
+
+		await Promise.all(loadImagePromises);
 
 		DECK.cards = createDobbleCardsFromImages(IMAGES);
 		randomize(canvases);
