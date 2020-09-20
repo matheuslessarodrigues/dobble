@@ -2,11 +2,52 @@ const RANDOMIZE_COUNT = 20;
 const RANDOMIZE_START_DURATION = 0;
 const RANDOMIZE_DURATION_ACCELERATION = 2;
 
+function panic(message) {
+	alert(message);
+	throw message;
+}
+
 const images = [];
 for(let i = 1; i <= 46; i++) {
 	const image = new Image();
 	image.src = `img-${i}.png`;
 	images.push(image);
+}
+
+/*
+const deck = images.length == 57 ?
+	createDobbleDeck(8) :
+	images.length == 31 ?
+	createDobbleDeck(6) :
+	images.length == 13 ?
+	createDobbleDeck(4) :
+	panic("numero de cartas tem que ser 57, 27 ou 13");
+*/
+
+function createDobbleDeck(n) {
+	// n-1 must be prime
+	const cards = [];
+
+	// first card and first category
+	for (let crd = 0; crd < n; crd++) {
+		const symbols = [0];
+		for (let sym = 1; sym < n; sym++) {
+			symbols.push(crd * (n-1) + sym);
+		}
+		cards.push(symbols.slice());
+	}
+
+	// other categories
+	for (let cat = 1; cat < n; cat++) {
+		for (let crd = 0; crd < n-1; crd++) {
+			const symbols = [cat];
+			for (let sym = 1; sym < n; sym++) {
+				symbols.push(1 + sym * (n-1) + ((cat-1) * (sym-1) + crd) % (n-1));
+			}
+			cards.push(symbols.slice());
+		}
+	}
+	return cards;
 }
 
 function randomize(imgElements) {
@@ -46,7 +87,7 @@ function randomizeAnimation(state) {
 
 window.onload = () => {
 	const imgs = document.querySelectorAll(".image-container img");
-	const button = document.querySelector("button");
+	const button = document.querySelector("button#randomize");
 
 	randomize(imgs);
 
